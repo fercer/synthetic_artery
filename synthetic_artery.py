@@ -534,6 +534,10 @@ class ArterySegment():
         self._mapping_visible_idx = self._mapping_visible_idx - adj_idx
 
 
+    def get_arc_size(self):
+        return self._n_arc_points
+
+
     def get_label(self):
         return self._segment_label
         

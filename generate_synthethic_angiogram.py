@@ -9,6 +9,35 @@ import sys
 import os
 import argparse
 
+### MAin artery segments:
+ca_relations = [
+    'LMm',
+    'L1p',
+    'L1m',
+    'L2m',
+    'L3m',
+    'L4p',
+    'L4m',
+    'C1p',
+    'C1m',
+    'MRo',
+    'MRm',
+    'C2m',
+    'C3m',
+    'M1o',
+    'M1m',
+    'M2o',
+    'M2m',
+    'R1p',
+    'R1m',
+    'R2m',
+    'R3m',
+    'RDm',
+    'R4m',
+    'RIm',
+    'RPm',
+]
+
 def draw_sphere(center, renderer, radii=0.05, color='Tomato', renderer_colors=None):
     # create a Sphere"
     sphereSource = vtk.vtkSphereSource()
@@ -116,22 +145,27 @@ def main():
     carm_model = carm.CArm(resolution_x = 512, resolution_y = 512)
     carm_model.set_src2det(111.2)
     carm_model.set_src2pat(87.61815646)
-    carm_model.rot_laorao(44.9*np.pi/180.0)
-    carm_model.rot_cracau(-0.1*np.pi/180.0)
+    carm_model.rot_laorao(np.random.rand()*np.pi)
+    carm_model.rot_cracau(np.random.rand()*np.pi/4.0)
 
-
-    artery_model = syn.ArteryModel(segment_points_density=500, radial_resolution=10, random_seed=None, random_positions=True)
+    artery_model = syn.ArteryModel(segment_points_density=1500, radial_resolution=50, random_seed=None, random_positions=True)
     artery_tree = artery_model.get_artery_tree()
+    artery_tree_keys = list(artery_tree.keys())
+    
+    selected_segment = ca_relations[np.random.randint(0, len(ca_relations))]
+    print('Selected segment:', selected_segment)
+    segment_arc_size = artery_tree[selected_segment].get_arc_size()
+    narrowing_size = int(np.random.rand() * segment_arc_size/2) + segment_arc_size//2
+    narrowing_init = int(np.random.rand() * (segment_arc_size - narrowing_size))
+    narrowing_degree = np.random.rand() * 0.5
+    artery_tree[selected_segment].narrow_diameter(narrowing_init, narrowing_size, narrowing_degree)
 
-    artery_renderer = render_artery(artery_model, display_render=False)
-    render_carm(carm_model, artery_renderer)
-   
     plt.subplot(1,2,1)
     projection_img = carm_model.project_artery(artery_model, artery_sub_tree='left')
-    plt.imshow(projection_img, 'gray')
+    plt.imshow(1.0-projection_img, 'gray')
     plt.subplot(1,2,2)
     projection_img = carm_model.project_artery(artery_model, artery_sub_tree='right')
-    plt.imshow(projection_img, 'gray')
+    plt.imshow(1.0-projection_img, 'gray')
     plt.show()
 
 
