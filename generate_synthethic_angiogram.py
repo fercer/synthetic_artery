@@ -57,6 +57,7 @@ def draw_sphere(center, renderer, radii=0.05, color='Tomato', renderer_colors=No
     # add the actors to the scene
     renderer.AddActor(sphereActor)
 
+
 def render_carm(carm_model, renderer=None, display_render=True):
     projection_plane_normal, projection_plane_d, detector_ref = carm_model.get_projection_plane()
     rot_mat = carm_model.get_rotation_matrix()
@@ -86,6 +87,7 @@ def render_carm(carm_model, renderer=None, display_render=True):
         renderWindowInteractor.Start()
 
     return renderer
+
 
 def render_artery(artery_model, renderer=None, display_render=True):
     colors = vtk.vtkNamedColors()
@@ -128,11 +130,12 @@ def render_artery(artery_model, renderer=None, display_render=True):
         renderWindow = vtk.vtkRenderWindow()
         renderWindow.SetWindowName('3D ellipse')
         renderWindow.AddRenderer(renderer)
-        
+
         renderWindowInteractor = vtk.vtkRenderWindowInteractor()
         renderWindowInteractor.SetRenderWindow(renderWindow)
 
         renderer.ResetCamera()
+        renderer.SetBackground(1, 1, 1)
         renderWindow.Render()
         
         renderWindowInteractor.Start()
@@ -142,7 +145,7 @@ def render_artery(artery_model, renderer=None, display_render=True):
 
 
 def main():
-    carm_model = carm.CArm(resolution_x = 512, resolution_y = 512)
+    carm_model = carm.CArm(resolution_x=512, resolution_y=512)
     carm_model.set_src2det(111.2)
     carm_model.set_src2pat(87.61815646)
     carm_model.rot_laorao(np.random.rand()*np.pi)
@@ -150,7 +153,6 @@ def main():
 
     artery_model = syn.ArteryModel(segment_points_density=1500, radial_resolution=50, random_seed=None, random_positions=True)
     artery_tree = artery_model.get_artery_tree()
-    artery_tree_keys = list(artery_tree.keys())
     
     selected_segment = ca_relations[np.random.randint(0, len(ca_relations))]
     print('Selected segment:', selected_segment)
@@ -168,6 +170,8 @@ def main():
     plt.imshow(1.0-projection_img, 'gray')
     plt.show()
 
+    renderer = vtk.vtkRenderer()
+    render_artery(artery_model, renderer=renderer, display_render=True)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Synthetic angiogram generator.')

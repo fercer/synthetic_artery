@@ -30,7 +30,6 @@ class CArm():
         
         self._update_scene()
 
-
     def _update_scene(self):
         clr = np.cos(self._lao_rao_angle)
         slr = np.sin(self._lao_rao_angle)
@@ -51,48 +50,38 @@ class CArm():
         self._projection_plane_d = np.dot(self._detector_ref, self._projection_plane_normal)
         print('Projection plane:', self._projection_plane_normal, ', d:', self._projection_plane_d)
 
-
     def set_pixdim(self, pix_x, pix_y):
         self._pix_x = pix_x
         self._pix_y = pix_y
-
 
     def set_src2det(self, dst_src2det):
         self._distance_source_detector = dst_src2det
         self._update_scene()
 
-
     def set_src2pat(self, dst_src2pat):
         self._distance_source_patient = dst_src2pat
         self._update_scene()
-
 
     def rot_laorao(self, laorao_angle):
         self._lao_rao_angle = laorao_angle
         self._update_scene()
 
-
     def rot_cracau(self, cracau_angle):
         self._cra_cau_angle = cracau_angle
         self._update_scene()
-
 
     def move(self, x=0.0, y=0.0, z=0.0):
         self._displacement_vector = np.array((x, y, z))
         self._update_scene()
 
-
     def get_projection_plane(self):
         return self._projection_plane_normal, self._projection_plane_d, self._detector_ref
 
-    
     def get_rotation_matrix(self):
         return self._rotation_mat
 
-
     def get_source_position(self):
         return self._source_ref
-
 
     def project_artery(self, artery_model, artery_sub_tree='both'):
         ### Define the artery sub tree (left or right) to be displayed
